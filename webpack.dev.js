@@ -1,10 +1,16 @@
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// 生成打包分析图，用来观察性能
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
     resolve: {
+        // 给出别名, 可以import别名， e.g. import 'MVVM', 而不是复杂的路径 e.g. import '../MVVM'
+        alias: {
+            MVVM: path.resolve(__dirname, 'src/Vendor/MVVM'),
+        },
+        // 可以在js文件中不用加扩展名，会尝试以下扩展名
         extensions: ['.js', '.css', '.json'],
     },
     mode: 'development',
@@ -16,6 +22,7 @@ module.exports = {
         filename: '[name].entry.bundle.js',
         chunkFilename: '[name].chunk.bundle.js',
     },
+    // 生成map文件, 如果有错误，会报出在源文件中的位置而不是生成的bundle文件的位置
     devtool: 'source-map',
     plugins: [
         new webpack.DefinePlugin({
@@ -24,6 +31,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'myapp',
             template: path.resolve(__dirname, 'src/index.ejs'),
+            // 如果有错误，显示在页面中
             showErrors: true,
         }),
         new BundleAnalyzerPlugin(),
@@ -38,7 +46,9 @@ module.exports = {
         // loader的加载顺序是从右往左，从下往上
         rules: [
             {
+                // 一个用以匹配 loaders 所处理文件的拓展名的正则表达式（必须）
                 test: /\.(js|jsx|mjs)$/,
+                // include/exclude：手动添加必须处理的文件（文件夹）或屏蔽不需要处理的文件（文件夹）（可选）
                 exclude: /node_modules/,
                 loader: ['babel-loader?cacheDirectory=true'],
             },
@@ -56,8 +66,9 @@ module.exports = {
                 use: {
                     loader: 'url-loader',
                     options: {
+                        // 如果小于这个值，会以base64为出现在css中 e.g. 1KB
                         limit: 1024,
-                        name: '[name].[hash:8].[ext]',
+                        name: '[name].[hash:8].[ext]', //  index.css 中background: url(test.b33efd67.jpg);
                     },
                 },
             },

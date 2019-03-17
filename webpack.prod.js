@@ -5,7 +5,7 @@ const FileListPlugin = require('./FileListPlugin.js');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     resolve: {
@@ -29,9 +29,9 @@ module.exports = {
         // When using CommonsChunkPlugin and there are extracted chunks from ExtractTextPlugin.extract
         // in the commons chunk, allChunks must be set to true."
         // 2. 会为manifest, vendors等公共chunk输出css文件
-        new ExtractTextPlugin({
+        new MiniCssExtractPlugin({
             filename: '[name].css',
-            allChunks: false,
+            chunkFilename: '[id].css',
         }),
         new HtmlWebpackPlugin({
             title: 'myapp',
@@ -57,39 +57,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 exclude: /node_modules/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                minimize: true,
-                                modules: true,
-                                localIdentName:
-                                    '[name]---[local]---[hash:base64:5]',
-                                camelCase: true,
-                            },
-                        },
-                        {
-                            loader: 'postcss-loader',
-                            options: {
-                                ident: 'postcss',
-                                plugins: () => [
-                                    require('postcss-flexbugs-fixes'),
-                                    autoprefixer({
-                                        browsers: [
-                                            '>1%',
-                                            'last 4 versions',
-                                            'Firefox ESR',
-                                            'not ie < 9', // React doesn't support IE8 anyway
-                                        ],
-                                        flexbox: 'no-2009',
-                                    }),
-                                ],
-                            },
-                        },
-                    ],
-                }),
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
             },
             {
                 test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],

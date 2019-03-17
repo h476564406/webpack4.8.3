@@ -9,8 +9,24 @@
 </head>
 
 <body>
-    <div id="app">app</div>
-    <button id="btn">Button</button>
+    <!-- onsubmit="console.log(1);return false;" -->
+    <form action="http://127.0.0.1:8081" method="post" enctype="multipart/form-data">
+        <label for="POST-name">Name:</label>
+        <input id="POST-name" type="text" name="name">
+        <input id="POST-age" type="text" name="age">
+        <input type="file" name="myFile">
+        <input type="submit" value="Save">
+    </form>
+    <script>
+        const form = document.forms[0];
+
+        // document.querySelector('input[type="file"]')
+        // document.querySelector('input[name="myFile"]')
+        // form.addEventListener('submit', (event) => {
+        //     console.log('event', event);
+        //     event.preventDefault();
+        // });
+    </script>
 </body>
 
 </html>
